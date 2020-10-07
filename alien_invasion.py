@@ -2,17 +2,20 @@ import sys
 
 import pygame
 
+from setting import Setting
+
 class AlienInvasion:
     """管理游戏资源和行为得类"""
 
     def __init__(self):
         """初始化游戏并创建游戏资源"""
         pygame.init()
+        self.setting = Setting()
 
-        self.screen = pygame.display.set_mode((900, 600))
+        self.screen = pygame.display.set_mode(
+            (self.setting.screen_width, self.setting.screen_high)
+        )
         pygame.display.set_caption("Alien Invasion")
-
-        self.bg_color = (230, 230, 230)
 
     def run_game(self):
         """开始游戏得主循环"""
@@ -23,7 +26,7 @@ class AlienInvasion:
                     sys.exit()
 
             # 每次循环都会重绘屏幕
-            self.screen.fill(self.bg_color)
+            self.screen.fill(self.setting.bg_color)
 
             # 让最近绘制得屏幕可见
             pygame.display.flip()
