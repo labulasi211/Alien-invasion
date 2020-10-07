@@ -4,6 +4,7 @@ import pygame
 
 from setting import Setting
 
+
 class AlienInvasion:
     """管理游戏资源和行为得类"""
 
