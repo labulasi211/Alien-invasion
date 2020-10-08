@@ -31,22 +31,13 @@ class AlienInvasion:
 
     def _check_events(self):
         """监视键盘和鼠标得事件"""
-        for even in pygame.event.get():
-            if even.type == pygame.QUIT:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 sys.exit()
-            elif even.type == pygame.KEYDOWN:
-                if even.key == pygame.K_RIGHT:
-                    # 向右移动飞船
-                    self.ship.move_right = True
-                elif even.key == pygame.K_LEFT:
-                    # 向左移动飞船
-                    self.ship.move_left = True
-            elif even.type == pygame.KEYUP:
-                # 停止移动
-                if even.key == pygame.K_RIGHT:
-                    self.ship.move_right = False
-                elif even.key == pygame.K_LEFT:
-                    self.ship.move_left = False
+            elif event.type == pygame.KEYDOWN:
+                self._check_keydown_event(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_event(event)
 
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
@@ -56,6 +47,23 @@ class AlienInvasion:
 
         # 让最近绘制得屏幕可见
         pygame.display.flip()
+
+    def _check_keydown_event(self, event):
+        """响应按键"""
+        if event.key == pygame.K_RIGHT:
+            # 向右移动飞船
+            self.ship.move_right = True
+        elif event.key == pygame.K_LEFT:
+            # 向左移动飞船
+            self.ship.move_left = True
+
+    def _check_keyup_event(self, event):
+        """响应松开"""
+        # 停止移动
+        if event.key == pygame.K_RIGHT:
+            self.ship.move_right = False
+        elif event.key == pygame.K_LEFT:
+            self.ship.move_left = False
 
 
 if __name__ == '__main__':
