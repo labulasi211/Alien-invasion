@@ -27,9 +27,9 @@ class Ship:
     def update(self):
         """根据移动标识符的调整飞船的位置"""
         # 更新飞船而不是rect对象的x值
-        if self.move_left and self.rect.left >0:
+        if self.move_left and self.rect.left > 0:
             self.x -= self.setting.ship_speed
-        if self.move_right and self.rect.right <self.screen_rect.right:
+        if self.move_right and self.rect.right < self.screen_rect.right:
             self.x += self.setting.ship_speed
 
         # 根据 self.x 更新 self.rect.x 的值
