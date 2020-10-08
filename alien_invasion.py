@@ -33,6 +33,10 @@ class AlienInvasion:
         for even in pygame.event.get():
             if even.type == pygame.QUIT:
                 sys.exit()
+            elif even.type == pygame.KEYDOWN:
+                if even.key == pygame.K_RIGHT:
+                    # 向右移动飞船
+                    self.ship.rect.x += 1
 
     def _update_screen(self):
         """更新屏幕上的图像，并切换到新屏幕"""
