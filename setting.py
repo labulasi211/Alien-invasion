@@ -8,4 +8,7 @@ class Setting:
         self.screen_high = 600
         self.bg_color = (230, 230, 230)
 
+        # 飞船设置
+        self.ship_speed = 0.5
+
 
