@@ -6,7 +6,7 @@ from setting import Setting
 
 from ship import Ship
 
-from bullet import Bullet
+from bullet import BulletXNegative, BulletXPositive, BulletYPositive
 
 
 class AlienInvasion:
@@ -23,7 +23,7 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         self.ship = Ship(self)
-        self.bullets = pygame.sprite.Group()
+        self.all_bullets = [pygame.sprite.Group(), pygame.sprite.Group(), pygame.sprite.Group()]
 
     def run_game(self):
         """开始游戏得主循环"""
@@ -49,8 +49,9 @@ class AlienInvasion:
         # 每次循环都会重绘屏幕
         self.screen.fill(self.setting.bg_color)
         self.ship.blitme()
-        for bullet in self.bullets.sprites():
-            bullet.draw_bullet()
+        for value in range(0, 3):
+            for bullet in self.all_bullets[value].sprites():
+                bullet.draw_bullet()
 
         # 让最近绘制得屏幕可见
         pygame.display.flip()
@@ -98,7 +99,7 @@ class AlienInvasion:
     def _update_bullets(self):
         """创建子弹，并限制子弹数量和发射间隔，更新子弹位置并删除看不见的子弹"""
         # 创建子弹，并加以限制
-        if len(self.bullets) < self.setting.bullet_allowed and self.setting.fire_bullet:
+        if len(self.all_bullets[0]) < self.setting.bullet_allowed and self.setting.fire_bullet:
             if self.setting.fire_bullet_limit == self.setting.fire_bullet_limit_keep:
                 self._fire_bullet()
                 self.setting.fire_bullet_limit = 0
@@ -106,17 +107,30 @@ class AlienInvasion:
                 self.setting.fire_bullet_limit += 1
 
         # 更新子弹位置
-        self.bullets.update()
+        for value in range(0, 3):
+            self.all_bullets[value].update()
 
         # 删除消失的子弹
-        for bullet in self.bullets.copy():
-            if bullet.rect.bottom <= 0:
-                self.bullets.remove(bullet)
+        for bullets in self.all_bullets.copy():
+            for bullet in bullets:
+                if bullet.kinds == 0:
+                    if bullet.rect.bottom <= 0:
+                        self.all_bullets[bullet.kinds].remove(bullet)
+                elif bullet.kinds == 1:
+                    if bullet.rect.right <= 0:
+                        self.all_bullets[bullet.kinds].remove(bullet)
+                elif bullet.kinds == 2:
+                    if bullet.rect.left >= self.ship.screen_rect.right:
+                        self.all_bullets[bullet.kinds].remove(bullet)
 
     def _fire_bullet(self):
         """创建一个子弹， 并将其加入到编组 bullets 中"""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        new_bullet = BulletXPositive(self)
+        self.all_bullets[2].add(new_bullet)
+        new_bullet = BulletXNegative(self)
+        self.all_bullets[1].add(new_bullet)
+        new_bullet = BulletYPositive(self)
+        self.all_bullets[0].add(new_bullet)
 
 
 if __name__ == '__main__':
