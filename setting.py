@@ -23,5 +23,11 @@ class Setting:
         self.fire_bullet_limit_keep = 100
         self.fire_bullet_limit = self.fire_bullet_limit_keep  # 用于计数限制长按空格时子弹发射速度
 
+        # 外星人设置
+        self.alien_speed = 1.0
+        self.alien_fleet_drop_speed = 10
+        # fleet_direction 为1表示外星人向右移，为-1表示外星人向左移
+        self.fleet_direction = 1
+
 
 
