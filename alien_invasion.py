@@ -140,8 +140,31 @@ class AlienInvasion:
 
     def _create_fleet(self):
         """创建外星人飞船群"""
-        # 创建单个外星人飞船
+        # 创建一个外星人并计算一行可容纳多少个外星人。
+        # 外星人的间距为外星人宽度
         alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.setting.screen_width - 4 * alien_width
+        number_alien_x = available_space_x // (2 * alien_width)
+
+        # 计算屏幕可容纳多少行外星人
+        ship_height = self.ship.rect.height
+        available_space_y = (self.setting.screen_height - ship_height -
+                             (3 * alien_height))
+        number_rows = available_space_y // (2 * alien_height)
+
+        # 创建外星人群
+        for row_number in range(number_rows):
+            for alien_number in range(number_alien_x):
+                self._create_alien(alien_number, row_number)
+
+    def _create_alien(self, alien_number, row_number):
+        """创建一个外星人并将其放在相应的位置"""
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width * 2 + 2 * alien_number * alien_width
+        alien.rect.x = alien.x
+        alien.rect.y = alien_height + (2 * alien_height) * row_number
         self.aliens.add(alien)
 
 
