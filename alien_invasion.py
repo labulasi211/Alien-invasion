@@ -8,6 +8,8 @@ from ship import Ship
 
 from bullet import BulletXNegative, BulletXPositive, BulletYPositive
 
+from alien import Alien
+
 
 class AlienInvasion:
     """管理游戏资源和行为得类"""
@@ -24,6 +26,9 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.all_bullets = [pygame.sprite.Group(), pygame.sprite.Group(), pygame.sprite.Group()]
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
     def run_game(self):
         """开始游戏得主循环"""
@@ -52,6 +57,7 @@ class AlienInvasion:
         for value in range(0, 3):
             for bullet in self.all_bullets[value].sprites():
                 bullet.draw_bullet()
+        self.aliens.draw(self.screen)
 
         # 让最近绘制得屏幕可见
         pygame.display.flip()
@@ -131,6 +137,12 @@ class AlienInvasion:
         self.all_bullets[1].add(new_bullet)
         new_bullet = BulletYPositive(self)
         self.all_bullets[0].add(new_bullet)
+
+    def _create_fleet(self):
+        """创建外星人飞船群"""
+        # 创建单个外星人飞船
+        alien = Alien(self)
+        self.aliens.add(alien)
 
 
 if __name__ == '__main__':
