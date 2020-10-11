@@ -15,12 +15,12 @@ class Setting:
         self.bullet_color = (60, 60, 60)
         self.bullet_width = 3
         self.bullet_height = 15
-        self.bullet_speed = 1
+        self.bullet_speed = 3
         self.bullet_allowed = 3
         # 开火标识符
         self.fire_bullet = False
         # 开火频率限度
-        self.fire_bullet_limit_keep = 100
+        self.fire_bullet_limit_keep = 50
         self.fire_bullet_limit = self.fire_bullet_limit_keep  # 用于计数限制长按空格时子弹发射速度
 
         # 外星人设置

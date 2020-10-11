@@ -104,18 +104,38 @@ class AlienInvasion:
         for value in range(0, 3):
             self.all_bullets[value].update()
 
-        # 删除消失的子弹
+        # 删除消失的所有子弹
         for bullets in self.all_bullets.copy():
             for bullet in bullets:
-                if bullet.kinds == 0:
-                    if bullet.rect.bottom <= 0:
-                        self.all_bullets[bullet.kinds].remove(bullet)
-                elif bullet.kinds == 1:
-                    if bullet.rect.right <= 0:
-                        self.all_bullets[bullet.kinds].remove(bullet)
-                elif bullet.kinds == 2:
-                    if bullet.rect.left >= self.ship.screen_rect.right:
-                        self.all_bullets[bullet.kinds].remove(bullet)
+                self._delete_bullets(bullet)
+
+        self._check_bullet_alien_collisions()
+
+    def _delete_bullets(self, bullet):
+        """删除到达边界的子弹"""
+        if bullet.kinds == 0:
+            if bullet.rect.bottom <= 0:
+                self.all_bullets[bullet.kinds].remove(bullet)
+        elif bullet.kinds == 1:
+            if bullet.rect.right <= 0:
+                self.all_bullets[bullet.kinds].remove(bullet)
+        elif bullet.kinds == 2:
+            if bullet.rect.left >= self.ship.screen_rect.right:
+                self.all_bullets[bullet.kinds].remove(bullet)
+
+    def _check_bullet_alien_collisions(self):
+        """相应子弹核外星人碰撞"""
+        # 检测是否有子弹击中外星人
+        # 如果是的话，就删除相应的子弹和外星人，并将这些相对应的子弹和外星人
+        # 通过键-值的形式保存起来
+        for value in range(3):
+            collisions = pygame.sprite.groupcollide(self.all_bullets[value], self.aliens, True, True)
+
+        if not self.aliens:
+            # 删除现在的所有子弹
+            for value in range(3):
+                self.all_bullets[value].empty()
+            self._create_fleet()
 
     def _fire_bullet(self):
         """创建一个子弹， 并将其加入到编组 bullets 中"""
