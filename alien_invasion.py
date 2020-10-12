@@ -1,5 +1,6 @@
 import sys
 from time import sleep
+from random import randint
 
 import pygame
 
@@ -170,18 +171,27 @@ class AlienInvasion:
                              (3 * alien_height))
         number_rows = available_space_y // (2 * alien_height)
 
-        # 创建外星人群
-        for row_number in range(number_rows):
-            for alien_number in range(number_alien_x):
-                self._create_alien(alien_number, row_number)
+        # 创建外星人群的数量
+        alien_num = number_rows * number_alien_x // 2
 
-    def _create_alien(self, alien_number, row_number):
+        # 随机创建外星人群
+        for value in range(alien_num):
+            self._create_alien(available_space_x, available_space_y)
+
+    def _create_alien(self, available_space_x, available_space_y):
         """创建一个外星人并将其放在相应的位置"""
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
-        alien.x = alien_width * 2 + 2 * alien_number * alien_width
+        alien.x = randint(alien_width * 2, alien_width * 2 + available_space_x)
         alien.rect.x = alien.x
-        alien.rect.y = alien_height + (2 * alien_height) * row_number
+        alien.y = randint(alien_height, available_space_y)
+        alien.rect.y = alien.y
+        alien.alien_speed = randint(1, 5) * 0.1
+        alien.alien_drop_speed = randint(1, 2) * 0.1
+        if randint(0, 1):
+            alien.alien_direction = 1
+        else:
+            alien.alien_direction = -1
         self.aliens.add(alien)
 
     def _update_aliens(self):
@@ -203,14 +213,11 @@ class AlienInvasion:
         """有外星人到达边缘时采取相应措施"""
         for alien in self.aliens.sprites():
             if alien.check_edges():
-                self._change_fleet_direction()
-                break
+                self._change_fleet_direction(alien)
 
-    def _change_fleet_direction(self):
+    def _change_fleet_direction(self, alien):
         """将整群外星人向下移，并改变他们额方向"""
-        for alien in self.aliens.sprites():
-            alien.rect.y += self.setting.alien_fleet_drop_speed
-        self.setting.fleet_direction *= -1
+        alien.alien_direction *= -1
 
     def _check_aliens_bottom(self):
         """检测是否有外星人到达了屏幕底端"""
