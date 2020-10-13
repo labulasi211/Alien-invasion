@@ -116,6 +116,9 @@ class AlienInvasion:
         # 隐藏鼠标光标
         pygame.mouse.set_visible(False)
 
+        # 重置游戏设置
+        self.setting.initialize_dynamic_setting()
+
     def _fire_stop_bullet(self):
         """停止开火，并且将限制初始化"""
         self.setting.fire_bullet = False
@@ -171,6 +174,7 @@ class AlienInvasion:
             # 删除现在的所有子弹
             self._delete_all_bullets()
             self._create_fleet()
+            self.setting.increase_speed()
 
     def _fire_bullet(self):
         """创建一个子弹， 并将其加入到编组 bullets 中"""
@@ -215,8 +219,12 @@ class AlienInvasion:
         # 让外星人的随机位置置于屏幕上方之外，让他们随机的进入屏幕
         alien.y = randint(-available_space_y, 0)
         alien.rect.y = alien.y
-        alien.alien_speed = randint(1, 5) * 0.1
-        alien.alien_drop_speed = randint(1, 2) * 0.1
+        alien.alien_speed = randint(
+            self.setting.aliens_lowest_speed_x, self.setting.aliens_highest_speed_x
+        ) * 0.1
+        alien.alien_drop_speed = randint(
+            self.setting.aliens_lowest_speed_y, self.setting.aliens_highest_speed_y
+        ) * 0.01
         if randint(0, 1):
             alien.alien_direction = 1
         else:
