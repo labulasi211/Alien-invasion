@@ -10,6 +10,7 @@ from bullet import BulletXNegative, BulletXPositive, BulletYPositive
 from alien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -26,7 +27,9 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         # 创立一个用于储存用于统计信息的实例
+        # 并创建记分牌
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.all_bullets = [pygame.sprite.Group(), pygame.sprite.Group(), pygame.sprite.Group()]
@@ -109,6 +112,8 @@ class AlienInvasion:
         # 重置游戏的统计信息
         self.stats.game_active = True
         self.stats.reset_stats()
+        self.sb.prep_score()
+        self.sb.prep_level()
 
         # 开始新的一局
         self._replace_ship_and_aliens()
@@ -170,11 +175,27 @@ class AlienInvasion:
         for value in range(3):
             collisions = pygame.sprite.groupcollide(self.all_bullets[value], self.aliens, True, True)
 
+            for collision in collisions.values():
+                for collision_alien in collision:
+                    self.stats.score += int(collision_alien.points)
+            self.sb.prep_score()
+            self._check_high_score()
+
         if not self.aliens:
             # 删除现在的所有子弹
             self._delete_all_bullets()
             self._create_fleet()
+
+            # 游戏等级提升
             self.setting.increase_speed()
+            self.stats.level += 1
+            self.sb.prep_level()
+
+    def _check_high_score(self):
+        """检测是否诞生新的最高得分"""
+        if self.stats.score > self.stats.high_score:
+            self.stats.high_score = self.stats.score
+            self.sb.prep_high_score()
 
     def _fire_bullet(self):
         """创建一个子弹， 并将其加入到编组 bullets 中"""
@@ -229,6 +250,10 @@ class AlienInvasion:
             alien.alien_direction = 1
         else:
             alien.alien_direction = -1
+
+        # 将每一个外星人的分数与其移动速度联系起来
+        alien.points = alien.alien_speed * 20 + alien.alien_drop_speed * 100
+
         self.aliens.add(alien)
 
     def _update_aliens(self):
@@ -269,6 +294,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             # 将 ship_left 减一
             self.stats.ships_left -= 1
+            self.sb.prep_ship()
 
             # 重新开始一局
             self._replace_ship_and_aliens()
@@ -302,6 +328,9 @@ class AlienInvasion:
         # 如果游戏处于非活动状态，就绘制 Play 按钮
         if not self.stats.game_active:
             self.play_button.draw_button()
+
+        # 显示得分
+        self.sb.show_score()
 
         # 让最近绘制得屏幕可见
         pygame.display.flip()
